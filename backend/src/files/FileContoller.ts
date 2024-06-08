@@ -33,6 +33,7 @@ export class FileController {
     async uploadImages(req: Request, res: Response) {
         upload.any()(req, res, (err) => {
 
+
             if (err) {
                 return res.status(500).json({ message: 'Error interno del servidor.' });
             }
