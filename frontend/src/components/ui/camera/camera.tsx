@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { ArrowLeftRight, Check, GalleryVerticalEnd, X } from "lucide-react";
@@ -83,7 +84,7 @@ const Camera: FC<CameraProps> = ({ onClosed, onCapturedImages }) => {
           )}
         </div>
 
-        <CameraView ref={camera}   />
+        <CameraView ref={camera} />
         <div className="absolute bottom-0 left-[45%] z-20 md:bottom-auto md:left-auto md:right-14 md:top-[50%] ">
           <Button
             className={cn(
@@ -122,7 +123,7 @@ const Camera: FC<CameraProps> = ({ onClosed, onCapturedImages }) => {
 };
 
 function SwitchCamera() {
-  const { devices, setActiveDeviceId, activeDeviceId,switchCamera } = useCamera();
+  const { devices, setActiveDeviceId, switchCamera } = useCamera();
 
   if (devices.length === 2) {
     return (

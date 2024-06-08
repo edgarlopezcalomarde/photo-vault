@@ -1,4 +1,6 @@
 import { registerController } from "./ControllerRegistry";
+import { RequestHandler } from "express";
+import "reflect-metadata";
 
 export function Controller(basePath: string) {
     return function (target: any) {
@@ -8,15 +10,14 @@ export function Controller(basePath: string) {
 }
 
 function createRouteDecorator(method: string) {
-    return function (path: string) {
+    return function (path: string, middlewares: RequestHandler[] = []) {
         return function (target: any, propertyKey: string) {
             const routes = Reflect.getMetadata('routes', target.constructor) || [];
-            routes.push({ method, path, handler: propertyKey });
+            routes.push({ method, path, handler: propertyKey, middlewares });
             Reflect.defineMetadata('routes', routes, target.constructor);
         }
     }
 }
-
 
 export const Get = createRouteDecorator('get');
 export const Post = createRouteDecorator('post');

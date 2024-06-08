@@ -1,13 +1,12 @@
-import { Router } from "express";
-
+import { Router, RequestHandler } from "express";
 
 type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
-
 
 interface Route {
     method: HttpMethod;
     path: string;
     handler: string;
+    middlewares?: RequestHandler[];
 }
 
 interface ControllerEntry {
@@ -15,8 +14,7 @@ interface ControllerEntry {
     instance: any;
 }
 
-
-const controllers: ControllerEntry[] = []
+const controllers: ControllerEntry[] = [];
 
 export function registerController(controller: any) {
     const instance = new controller();
@@ -24,9 +22,9 @@ export function registerController(controller: any) {
 }
 
 export function registerControllers(controllers: any[]) {
-    [controllers].forEach(controller => {
-        registerController(controller[0]);
-    })
+    controllers.forEach(controller => {
+        registerController(controller);
+    });
 }
 
 export function initializeControllers(appRouter: Router, defaultPath: string = '') {
@@ -37,7 +35,11 @@ export function initializeControllers(appRouter: Router, defaultPath: string = '
         routes.forEach(route => {
             const handler = instance[route.handler].bind(instance);
             const fullPath = defaultPath + basePath + route.path;
-            appRouter[route.method](fullPath, handler);
+            if (route.middlewares && route.middlewares.length > 0) {
+                appRouter[route.method](fullPath, ...route.middlewares, handler);
+            } else {
+                appRouter[route.method](fullPath, handler);
+            }
         });
     });
 }
