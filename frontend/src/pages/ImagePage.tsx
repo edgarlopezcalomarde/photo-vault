@@ -6,7 +6,8 @@ import { API_ENTRY_POINT } from "@/lib/config";
 import { Cancel } from "@/lib/icons";
 import { CameraIcon } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+// import { Link } from "react-router-dom";
 
 function ImagePage() {
     const [showDialog, setShowDialog] = useState(false);
@@ -35,6 +36,14 @@ function ImagePage() {
                         ))}
                     </div>
                 )}
+
+                {
+                    capturedImages.length === 0 && (
+                        <div className=" font-medium text-3xl">
+                            No hay imagenes para subir
+                        </div>
+                    )
+                }
             </div>
             <div className="flex flex-col gap-2">
                 <Dialog open={showDialog} onOpenChange={(open) => setShowDialog(open)}>
@@ -62,9 +71,9 @@ function ImagePage() {
                     Guardar
                 </Button>
 
-                <Button variant="default" className="mt-auto">
+                {/* <Button variant="default" className="mt-auto">
                     <Link to="/file">Archivos</Link>
-                </Button>
+                </Button> */}
             </div>
         </div>
     );
@@ -76,6 +85,7 @@ function ImagePage() {
 
     async function handleImageToTheServer() {
         if (capturedImages.length === 0) {
+            toast.error("No hay fotos en la galeria");
             return
         }
         const formData = new FormData();
@@ -84,13 +94,35 @@ function ImagePage() {
             formData.append("images", image);
         });
 
-        fetch(API_ENTRY_POINT + "/file/image/upload", {
+        const saveImagesOnServer = fetch(API_ENTRY_POINT + "/file/image/upload", {
             method: "POST",
             body: formData,
-        })
-            .then((res) => res.json())
-            .then((res) => console.log(res))
-            .catch(err => console.log(err))
+        }).then(data => {
+            if (!data.ok) {
+                return data.json().then(err => {
+                    throw new Error(err.message || "No se pudo subir la/s imagen/es");
+                })
+            }
+            setCapturedImages([])
+            return data.json();
+        }).catch(err => {
+            throw new Error(err.message || "Error desconocido");
+        });
+
+        toast.promise(
+            saveImagesOnServer,
+            {
+                loading: 'Subiendo...',
+                success: (data) => {
+                    return <b>{data.message}</b>
+                },
+                error: (err) => {
+                    return <b>{err.message}</b>
+                },
+            }
+        );
+
+
 
     }
 }

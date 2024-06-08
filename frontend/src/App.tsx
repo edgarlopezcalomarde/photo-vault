@@ -5,13 +5,15 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ImagePage from "./pages/ImagePage";
-import FilePage from "./pages/FilePage";
+// import FilePage from "./pages/FilePage";
+import RootLayout from "./layout/RootLayout";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route>
+    <Route element={<RootLayout />}>
       <Route path="/" element={<ImagePage />} />
-      <Route path="/file" element={<FilePage />} />
+      {/* <Route path="/file" element={<FilePage />} /> */}
     </Route>
   )
 );

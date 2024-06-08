@@ -31,8 +31,6 @@ function FilePage() {
                 )}
             </div>
             <div className="flex flex-col gap-2">
-
-
                 <Button variant="default">
                     <UploadIcon className="mr-2 h-5 w-5" />
                     <label htmlFor="file-upload">
